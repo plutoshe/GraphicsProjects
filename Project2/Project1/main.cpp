@@ -7,8 +7,8 @@
 	#define GLEWAPI extern __declspec(dllimport)
 #endif
 #endif
-#include<gl/glew.h>
-#include<gl/freeglut.h>
+#include<GL/glew.h>
+#include<GL/freeglut.h>
 #include<iostream>
 #include "Vector3f.h"
 #include "cyTriMesh.h"
@@ -17,11 +17,10 @@
 #include <fstream>
 using namespace std;
 
-GLuint VBO;
 cyTriMesh meshData;
 const char* pVSFileName = "shader.vs";
 const char* pFSFileName = "shader.fs";
-
+GLuint VBO;
 void changeViewport(int w, int h)
 {
 	glViewport(0, 0, w, h);
@@ -69,7 +68,8 @@ static void CreateVertexBuffer()
 		Vertices[i] = Vector3f(v[i].x, v[i].y, v[i].z);
 
 	printf("%d", sizeof(Vertices));
-	
+
+
 	// 创建缓冲器
 	glGenBuffers(1, &VBO);
 	// 绑定GL_ARRAY_BUFFER缓冲器
@@ -86,22 +86,34 @@ static void CreateVertexBuffer()
 	glBufferData(GL_ARRAY_BUFFER, sizeof(Vertices), Vertices, GL_STATIC_DRAW);*/
 }
 
-void idleFunc() {}
-
-void processNormalKeys(unsigned char key, int x, int y) {
-	printf("%d", key);
-	if (key == 27)
-		exit(0);
-}
 
 void loadVertex(cyTriMesh &trimesh, char* filename) {
-	trimesh.LoadFromFileObj("D:\\learning\\2nd_semester\\ComputerGraphics\\Project2\\teapot.obj");
+	trimesh.LoadFromFileObj(filename);
 }
 
 
 // 使用shader文本编译shader对象，并绑定shader都想到着色器程序中
 static void AddShader(GLuint ShaderProgram, const char* pShaderText, GLenum ShaderType)
 {
+//
+//1、首先通过hVertexShader = glCreateShader(GL_VERTEX_SHADER)创建着色器对象
+//2、gltLoadShaderFile(szVertexProg,hVertexShader)随后加载着色器文件
+//3、加载之后再进行编译：glComplileShader(hVertexShader)
+//4、创建最终的程序对象：
+//hReturn = glCreateProgram();
+//glAttachShader(hReturn,hVertexShader)
+//glAttachShader(hReturn,hFragmentShader)
+//5、将参数名绑定到指定的参数位置列表上
+//6、绑定之后进行链接：glLinkProgram(hRet)
+//7、链接完成删除之前的顶点着色器和片段着色器glDeleteShader(hVertexShader)
+//8、使用着色器：glUseProgram(myShader)
+//
+//--------------------- 
+//作者：大宅小涛 
+//来源：CSDN 
+//原文：https://blog.csdn.net/zh13544539220/article/details/45822145 
+//版权声明：本文为博主原创文章，转载请附上博文链接！
+
 	// 根据shader类型参数定义两个shader对象
 	GLuint ShaderObj = glCreateShader(ShaderType);
 	// 检查是否定义成功
@@ -196,8 +208,32 @@ static void CompileShaders()
 	// 设置到管线声明中来使用上面成功建立的shader程序
 	glUseProgram(ShaderProgram);
 }
+int aButton;
+int aState;
+int ax;
+int ay;
+void processMouse(int button, int state, int x, int y) {
+	DEBUG_LOG("%d %d %d %d", button, state, x, y);
+	aButton = button;
+	aState = state;
+	ax = x;
+	ay = y;
+}
+
+void processMovement(int x, int y) {
+	DEBUG_LOG("pos: %d %d", x, y);
+}
 
 
+void idleFunc() {
+
+}
+
+void processNormalKeys(unsigned char key, int x, int y) {
+	printf("%d", key);
+	if (key == 27)
+		exit(0);
+}
 int main(int argc, char** argv) {
 	DEBUG_LOG("%s", argv[1]);
 	loadVertex(meshData, argv[1]);
@@ -212,7 +248,8 @@ int main(int argc, char** argv) {
 	glutInitWindowSize(1024, 768);      // 窗口尺寸
 	glutInitWindowPosition(100, 100);  // 窗口位置
 	glutCreateWindow("Hello world");   // 窗口标题
-
+	glutMouseFunc(processMouse);
+	glutMotionFunc(processMovement);
 	// 开始渲染
 	glutDisplayFunc(render);
 	glutIdleFunc(idleFunc);
