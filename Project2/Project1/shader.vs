@@ -13,7 +13,7 @@ float zUpperBound = 20.f;
 
 void main()
 {
-     vec4 trans = vec4(test.x, Position.y, Position.z, Position.z) ;
+     vec4 trans = vec4(Position.x, Position.y, Position.z, Position.z) ;
     mat4 aMat4 = mat4(2 * zLowBound / (xUpperBound - xLowBound), 0.0, 0.0, 0.0,  // 1. column
                   0.0, 2 * zLowBound / (yUpperBound - yLowBound), 0.0, 0.0,  // 2. column
                   (xUpperBound + xLowBound) / (xUpperBound - xLowBound),(yLowBound + yUpperBound) / (yUpperBound - yLowBound), -(zLowBound + zUpperBound)/ (zUpperBound - zLowBound), 0.0,  // 3. column

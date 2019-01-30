@@ -1,26 +1,35 @@
 ﻿#ifdef GLEW_STATIC
 	#define GLEWAPI extern
 #else
-#ifdef GLEW_BUILD
-	#define GLEWAPI extern __declspec(dllexport)
-#else
-	#define GLEWAPI extern __declspec(dllimport)
+	#ifdef GLEW_BUILD
+		#define GLEWAPI extern __declspec(dllexport)
+	#else
+		#define GLEWAPI extern __declspec(dllimport)
+	#endif
 #endif
-#endif
+
+#include<iostream>
+#include <fstream>
+
 #include<GL/glew.h>
 #include<GL/freeglut.h>
-#include<iostream>
-#include "Vector3f.h"
+
+
 #include "cyTriMesh.h"
-#include "Log.h"
 #include "cyPoint.h"
-#include <fstream>
+#include "Log.h"
+#include "Vector3f.h"
+#include "glApplicationState.h"
+
 using namespace std;
 
 cyTriMesh meshData;
 const char* pVSFileName = "shader.vs";
 const char* pFSFileName = "shader.fs";
 GLuint VBO;
+glApplicationState astate = glApplicationState();
+
+
 void changeViewport(int w, int h)
 {
 	glViewport(0, 0, w, h);
@@ -28,22 +37,6 @@ void changeViewport(int w, int h)
 
 void render()
 {
-	
-	/*glClearColor(0, 0.5, 0.3, 1);
-	
-	glClear(GL_COLOR_BUFFER_BIT);
-
-	glEnableVertexAttribArray(0);
-	
-	glBindBuffer(GL_ARRAY_BUFFER, VBO);
-	
-	glVertexAttribPointer(0, 3, GL_FLOAT, GL_FALSE, 0, 0);
-
-	
-	glDrawArrays(GL_POINTS, 0, 3241);
-
-	glDisableVertexAttribArray(0);
-	glutSwapBuffers();*/
 	glClear(GL_COLOR_BUFFER_BIT);
 
 	glEnableVertexAttribArray(0);
@@ -206,22 +199,25 @@ static void CompileShaders()
 	}
 
 	// 设置到管线声明中来使用上面成功建立的shader程序
+	
+	int loc = glGetUniformLocation(ShaderProgram, "inputColor");
 	glUseProgram(ShaderProgram);
+	DEBUG_LOG("%d %d", astate.deltaX, astate.deltaY);
+	glUniform4f(loc, astate.deltaX, astate.deltaY, 0.f, 1.f);
 }
-int aButton;
-int aState;
-int ax;
-int ay;
+
 void processMouse(int button, int state, int x, int y) {
 	DEBUG_LOG("%d %d %d %d", button, state, x, y);
-	aButton = button;
-	aState = state;
-	ax = x;
-	ay = y;
+	astate.aButton = button;
+	astate.aState = state;
+	astate.ax = x;
+	astate.ay = y;
 }
 
 void processMovement(int x, int y) {
-	DEBUG_LOG("pos: %d %d", x, y);
+	//DEBUG_LOG("pos: %d %d", x, y);
+	astate.deltaX = x - astate.ax;
+	astate.deltaY = y - astate.ay;
 }
 
 
@@ -234,16 +230,13 @@ void processNormalKeys(unsigned char key, int x, int y) {
 	if (key == 27)
 		exit(0);
 }
+
 int main(int argc, char** argv) {
 	DEBUG_LOG("%s", argv[1]);
 	loadVertex(meshData, argv[1]);
-
-
 	glutInit(&argc, argv);
-
 	// 显示模式：双缓冲、RGBA
 	glutInitDisplayMode(GLUT_DOUBLE | GLUT_RGBA);
-	
 	// 窗口设置
 	glutInitWindowSize(1024, 768);      // 窗口尺寸
 	glutInitWindowPosition(100, 100);  // 窗口位置
@@ -261,7 +254,6 @@ int main(int argc, char** argv) {
 		fprintf(stderr, "Error: '%s'\n", glewGetErrorString(res));
 		return 1;
 	}
-
 	// 缓存清空后的颜色值
 	glClearColor(0.0f, 0.0f, 0.0f, 0.0f);
 
