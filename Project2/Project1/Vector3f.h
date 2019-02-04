@@ -13,7 +13,13 @@ public:
 	}
 	Vector3f operator+(const Vector3f& addend);
 	Vector3f operator-(const Vector3f& minus);
-	Vector3f operator*(const float mul);
+//	Vector3f operator*(const float mul);
+	friend Vector3f operator *(const Vector3f& multiply, const float mul) {
+		return Vector3f(multiply.x * mul, multiply.y * mul, multiply.z * mul);
+	}
+	friend Vector3f operator *(const float mul, const Vector3f& multiply) {
+		return multiply * mul;
+	}
 	Vector3f operator/(const float div);
 	bool operator==(const Vector3f& comp) const;
 	void operator=(const Vector3f& origin);
@@ -21,7 +27,6 @@ public:
 	float x, y, z;
 	Vector3f normalized();
 	float length();
-	void clear();
-	
+	void zero();
 };
 

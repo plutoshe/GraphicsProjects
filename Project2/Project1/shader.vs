@@ -1,35 +1,76 @@
-﻿#version 330  //告诉编译器我们的目标GLSL编译器版本是3.3
+﻿#version 330 core
 
-layout (location = 0) in vec3 Position; // 绑定定点属性名和属性，方式二缓冲属性和shader属性对应映射
-//layout (location = 1) uniform vec4 test;
-//uniform float myVar;
+layout (location = 0) in vec3 Position; 
 
-float xLowBound = -100.f;
-float xUpperBound = 100.f;
-float yLowBound = -100.f;
-float yUpperBound = 100.f;
-float zLowBound = 10.f;
-float zUpperBound = 20.f;
+float xLowBound = -1024.f;
+float xUpperBound = 1024.f;
+float yLowBound = -800.f;
+float yUpperBound = 800.f;
+float zLowBound = -200.f;
+float zUpperBound = 200.f;
+uniform vec3 viewport_pos;
+uniform vec4 viewport_rot;
+
+vec4 QuaternionMultiply(vec4 p, vec4 q) {
+	return vec4(
+			p.w * q.x + p.x * q.w + p.y * q.z - p.x * q.y,
+			p.w * q.y - p.x * q.z + p.y * q.w + p.z * q.x,
+			p.w * q.z + p.x * q.y - p.y * q.x + p.z * q.w,
+			-p.x * q.x - p.y * q.y - p.z * q.z + p.w * q.w);
+}
+vec4 getConjugate(vec4 p)
+{
+	return vec4(-p.x, -p.y, -p.z, p.w);
+}
+
+float length(vec4 p) {
+    return sqrt(p.x * p.x + p.y * p.y + p.z * p.z + p.w * p.w);
+}
+
+vec4 normalized(vec4 p) {
+    float len = length(p);
+    if (len > 0)
+        return p / len; 
+    return p;
+} 
 
 void main()
 {
-     vec4 trans = vec4(Position.x, Position.y, Position.z, Position.z) ;
-    mat4 aMat4 = mat4(2 * zLowBound / (xUpperBound - xLowBound), 0.0, 0.0, 0.0,  // 1. column
-                  0.0, 2 * zLowBound / (yUpperBound - yLowBound), 0.0, 0.0,  // 2. column
-                  (xUpperBound + xLowBound) / (xUpperBound - xLowBound),(yLowBound + yUpperBound) / (yUpperBound - yLowBound), -(zLowBound + zUpperBound)/ (zUpperBound - zLowBound), 0.0,  // 3. column
-                  0.0, 0.0, 0.0, 2 * zUpperBound * zLowBound / (zUpperBound - zLowBound));
+    // calculate the coordinate based on this origin
+    vec4 qua = vec4(
+        Position.x - viewport_pos.x, 
+        Position.y - viewport_pos.y,
+        Position.z - viewport_pos.z,
+        0);
+    float mag = length(qua);
+    qua = normalized(qua);
+    qua = QuaternionMultiply(QuaternionMultiply(viewport_rot, qua), getConjugate(viewport_rot));
+    qua = normalized(qua) * mag;
+    
+    vec4 trans = vec4(
+        qua.x ,
+        qua.y , 
+        qua.z,
+        qua.z); 
+    
+    // rotate vertex based on current axis
 
-        //
-       // 0,,0,0,
-        //,0,
-        //0,0,0,,
-   // vec3 tile=texture2D(colMap, coords.st).xyz;
-   // vec4 col = vec4(tile, 1.0);
-   //      if (test.x > 1) {
-   //         col.x+=1;
-   //      }
-     vec4 trans1 = aMat4 * vec4(1.0, 1.0, 1.0, 1.0);
-    gl_Position =   trans * aMat4;
-    //gl_FragColor = col;
- //gl_Position = vec4(0.1 * Position.x, 0.1 * Position.y, Position.z, 1.0); // 为glVertexAttributePointer提供返回值
+
+    
+    // vec4 trans = vec4(
+    //     trans.x,
+    //     trans.y, 
+    //     trans.z, 
+    //     trans.z) ;
+
+    // calculate the clip space tranformation matrix
+    mat4 aMat4 = mat4(
+        2 * zLowBound / (xUpperBound - xLowBound), 0.0, 0.0, 0.0,  // column
+        0.0, 2 * zLowBound / (yUpperBound - yLowBound), 0.0, 0.0,  
+        (xUpperBound + xLowBound) / (xUpperBound - xLowBound),(yLowBound + yUpperBound) / (yUpperBound - yLowBound), -(zLowBound + zUpperBound)/ (zUpperBound - zLowBound), -1,  // 3. column
+        0.0, 0.0, 0.0, -2 * zUpperBound * zLowBound / (zUpperBound - zLowBound));
+
+    // calculate the new vertex
+    gl_Position = aMat4 * trans;
+    gl_Position = gl_Position / gl_Position.w;    
 }

@@ -13,10 +13,10 @@ Vector3f Vector3f::operator+(const Vector3f& addend) {
 Vector3f Vector3f::operator-(const Vector3f& minus) {
 	return Vector3f(x - minus.x, y - minus.y, z - minus.z);
 }
-
-Vector3f Vector3f::operator*(float mul) {
-	return Vector3f(x * mul, y * mul, z * mul);
-}
+//
+//Vector3f Vector3f::operator*(float mul) {
+//	return Vector3f(x * mul, y * mul, z * mul);
+//}
 
 Vector3f Vector3f::operator/(float div) {
 	return Vector3f(x / div, y / div, z / div);
@@ -44,7 +44,7 @@ float Vector3f::length() {
 	return sqrt((x * x) + (y * y) + (z * z));
 }
 
-void Vector3f::clear() {
+void Vector3f::zero() {
 	x = y = z = 0;
 }
 

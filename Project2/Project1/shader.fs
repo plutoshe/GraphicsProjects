@@ -1,10 +1,9 @@
-﻿#version 330 core //告诉编译器我们的目标GLSL编译器版本是3.3
+﻿#version 330 core
 //uniform vec4 inputColor;
-out vec4 FragColor;  // 片段着色器的输出颜色变量
-uniform vec4 inputColor;
-// 着色器的唯一入口函数
+out vec4 FragColor;
+
+
 void main()
 {
-    // 定义输出颜色值
-    FragColor = inputColor;
+    FragColor = vec4(0.5f,0.5f,0.5f,1.f);
 } 
