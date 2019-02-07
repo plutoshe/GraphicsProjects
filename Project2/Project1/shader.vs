@@ -64,6 +64,7 @@ void main()
     //     trans.z) ;
 
     // calculate the clip space tranformation matrix
+    
     mat4 aMat4 = mat4(
         2 * zLowBound / (xUpperBound - xLowBound), 0.0, 0.0, 0.0,  // column
         0.0, 2 * zLowBound / (yUpperBound - yLowBound), 0.0, 0.0,  
@@ -73,4 +74,5 @@ void main()
     // calculate the new vertex
     gl_Position = aMat4 * trans;
     gl_Position = gl_Position / gl_Position.w;    
+    
 }

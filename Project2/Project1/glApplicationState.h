@@ -5,9 +5,16 @@
 #include "Vector3f.h"
 #include "Vector4f.h"
 #include "cyMatrix.h"
+
+
 class glApplicationState
 {
 public:
+	struct {
+		Vector3f Pos;
+		Vector3f Target;
+		Vector3f Up;
+	} m_camera;
 	glApplicationState() {}
 	~glApplicationState() {}
 	int aButton;
