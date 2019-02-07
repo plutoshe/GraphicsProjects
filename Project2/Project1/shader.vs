@@ -11,11 +11,17 @@ out vec4 Color;
 void main()
 {
     // calculate the new vertex
-    gl_Position = gWorld * vec4(Position, 1.0);
-    gl_Position = gl_Position / -gl_Position.w;    
-    gl_Position.w = 1;
+    gl_Position = gWorld * vec4(Position, 1);
+    gl_Position = gl_Position / gl_Position.w;    
+    gl_Position.z = 1;
+    
+    // gl_Position.x = Position.x;
+    // gl_Position.y = Position.y;
+    // gl_Position.z = Position.z;
+    // gl_Position.w = 1;
+    //gl_Position = vec4(Position, 1.0);
 
-    float a = clamp((Position.z - zLowBound) / (zUpperBound - zLowBound), 0.f, 1.f);
+    float a = clamp((gl_Position.z - zLowBound) / (zUpperBound - zLowBound), 0.f, 1.f);
     Color = vec4(a, a, 1, 1);
 }
 // #version 330 core

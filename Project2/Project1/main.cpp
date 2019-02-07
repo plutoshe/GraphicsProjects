@@ -101,19 +101,25 @@ static void RenderSceneCB()
 	float yLowBound = -1.f;
 	float yUpperBound = 1.f;
 	float zLowBound = 1.f;
-	float zUpperBound = 1000.f;
+	float zUpperBound = 100.f;
 	cyMatrix4f aMat4(
-		2 * zLowBound / (xUpperBound - xLowBound), 0.0, 0.0, 0.0,  // column
+		2 * zLowBound / (xUpperBound - xLowBound), 0.0, 0.0, 0.0,  
 		0.0, 2 * zLowBound / (yUpperBound - yLowBound), 0.0, 0.0,
-		(xUpperBound + xLowBound) / (xUpperBound - xLowBound), (yLowBound + yUpperBound) / (yUpperBound - yLowBound),
-		-(zLowBound + zUpperBound) / (zUpperBound - zLowBound), -1,  // 3. column
-		0.0, 0.0, -2 * zUpperBound * zLowBound / (zUpperBound - zLowBound), 0.f);
-	aMat4.Transpose();
+		
+		0.0, 0.0, (-zLowBound - zUpperBound) / (zUpperBound - zLowBound), -2 / (zUpperBound - zLowBound), 
+		0.0, 0.0, 1.0, 0.f);
+	//aMat4.Transpose();
 	
 	aMat4 =
 		aMat4 *
 		pCamera->InitialMyCameraTransform() *
 		Transform::InitTranslationTransform(-pCamera->GetPos().x, -pCamera->GetPos().y, -pCamera->GetPos().z);
+	aMat4.Transpose();
+	cyMatrix4f bMat4(
+		1.0f, 0.0f, 0.f, 0.f,
+		0.0f, 1.0f, 0.f, 0.f,
+		0.0f, 0.0f, -1.f, 1.f,
+		0.0f, 0.0f, 2.f, 0);
 	glUniformMatrix4fv(gWorldLocation, 1, GL_TRUE, (const GLfloat*)aMat4.data);
 
 	glEnableVertexAttribArray(0);
@@ -150,7 +156,7 @@ static void CreateVertexBuffer()
 	Vertices[0] = Vector3f(0.0f, 0.0f, 1.0f);
 	Vertices[1] = Vector3f(0.0f, 1.0f, 1.0f);
 	Vertices[2] = Vector3f(1.0f, 0.0f, 1.0f);
-	Vertices[3] = Vector3f(-1.0f, -1.0f, 2.0f);
+	Vertices[3] = Vector3f(1.0f, 1.0f, 2.0f);
 
 	glGenBuffers(1, &VBO);
 	glBindBuffer(GL_ARRAY_BUFFER, VBO);
