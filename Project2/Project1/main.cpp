@@ -66,6 +66,8 @@ using namespace std;
 #include "pipeline.h"
 #include <string.h>
 #include "PersProjInfo.h"
+#include "Camera.h"
+#include "Transform.h"
 
 // 屏幕宽高宏定义
 #define WINDOW_WIDTH 1024
@@ -94,19 +96,37 @@ static void RenderSceneCB()
 	//p.WorldPos(0.0f, 0.0f, 5.0f);
 	//// 设置投影变换的参数
 	//p.SetPerspectiveProj(gPersProjInfo);
-	//float xLowBound = -1.f;
-	//float xUpperBound = 1.f;
-	//float yLowBound = -1.f;
-	//float yUpperBound = 1.f;
-	//float zLowBound = 1.f;
-	//float zUpperBound = 2.f;
-	//mat4 aMat4 = mat4(
-	//	2 * zLowBound / (xUpperBound - xLowBound), 0.0, 0.0, 0.0,  // column
-	//	0.0, 2 * zLowBound / (yUpperBound - yLowBound), 0.0, 0.0,
-	//	(xUpperBound + xLowBound) / (xUpperBound - xLowBound), (yLowBound + yUpperBound) / (yUpperBound - yLowBound), -(zLowBound + zUpperBound) / (zUpperBound - zLowBound), -1,  // 3. column
-	//	0.0, 0.0, 0.0, -2 * zUpperBound * zLowBound / (zUpperBound - zLowBound));
+	float xLowBound = -1.f;
+	float xUpperBound = 1.f;
+	float yLowBound = -1.f;
+	float yUpperBound = 1.f;
+	float zLowBound = 1.f;
+	float zUpperBound = 1000.f;
+	cyMatrix4f aMat4(
+		2 * zLowBound / (xUpperBound - xLowBound), 0.0, 0.0, 0.0,  // column
+		0.0, 2 * zLowBound / (yUpperBound - yLowBound), 0.0, 0.0,
+		(xUpperBound + xLowBound) / (xUpperBound - xLowBound), (yLowBound + yUpperBound) / (yUpperBound - yLowBound),
+		-(zLowBound + zUpperBound) / (zUpperBound - zLowBound), -1,  // 3. column
+		0.0, 0.0, -2 * zUpperBound * zLowBound / (zUpperBound - zLowBound), 0.f);
+	aMat4.Transpose();
 
-	//glUniformMatrix4fv(gWorldLocation, 1, GL_TRUE, (const GLfloat*)p.GetWPTrans());
+	
+	Camera p;
+	Vector3f CameraPos(1.0f, 1.0f, -3.0f);
+	Vector3f CameraTarget(0.45f, 0.0f, 1.0f);
+	Vector3f CameraUp(0.0f, 1.0f, 0.0f);
+
+	Vector3f CameraPos1(0.5f, 0.f, 0.f);
+	Vector3f CameraTarget1(0.f, 0.0f, 1.0f);
+	Vector3f CameraUp1(0.0f, 1.0f, 0.0f);
+
+	p.SetCamera(CameraPos1, CameraTarget1, CameraUp1);
+	
+	aMat4 =
+		aMat4 *
+		p.InitialMyCameraTransform() *
+		Transform::InitTranslationTransform(-p.GetPos().x, -p.GetPos().y, -p.GetPos().z);
+	glUniformMatrix4fv(gWorldLocation, 1, GL_TRUE, (const GLfloat*)aMat4.data);
 
 	glEnableVertexAttribArray(0);
 	glBindBuffer(GL_ARRAY_BUFFER, VBO);
@@ -136,7 +156,7 @@ static void CreateVertexBuffer()
 	Vertices[3] = Vector3f(0.0f, 1.0f, 0.0f);*/
 	Vertices[0] = Vector3f(0.0f, 0.0f, 1.0f);
 	Vertices[1] = Vector3f(0.0f, 1.0f, 1.0f);
-	Vertices[2] = Vector3f(1.0f, 1.0f, 1.0f);
+	Vertices[2] = Vector3f(1.0f, 0.0f, 1.0f);
 	Vertices[3] = Vector3f(-1.0f, -1.0f, 2.0f);
 
 	glGenBuffers(1, &VBO);
@@ -146,9 +166,13 @@ static void CreateVertexBuffer()
 
 static void CreateIndexBuffer()
 {
-	unsigned int Indices[] = { 0, 3, 1,
+	unsigned int Indices[] = {
+		/*0, 3, 1,
 							   1, 3, 2,
-							   2, 3, 0,
+							   2, 3, 0,*/
+		0, 1, 2,
+		0, 1, 2,
+		0, 1, 2,
 							   0, 1, 2 };
 
 	glGenBuffers(1, &IBO);
