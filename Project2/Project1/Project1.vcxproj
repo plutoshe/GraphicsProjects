@@ -135,15 +135,19 @@
     </Link>
   </ItemDefinitionGroup>
   <ItemGroup>
+    <ClCompile Include="Camera.cpp" />
     <ClCompile Include="glApplication.cpp" />
     <ClCompile Include="glApplicationState.cpp" />
     <ClCompile Include="Log.cpp" />
     <ClCompile Include="main.cpp" />
+    <ClCompile Include="PersProjInfo.cpp" />
+    <ClCompile Include="pipeline.cpp" />
     <ClCompile Include="Quaternion.cpp" />
     <ClCompile Include="Vector3f.cpp" />
     <ClCompile Include="Vector4f.cpp" />
   </ItemGroup>
   <ItemGroup>
+    <ClInclude Include="Camera.h" />
     <ClInclude Include="cyAlphaDistribution.h" />
     <ClInclude Include="cyBVH.h" />
     <ClInclude Include="cyColor.h" />
@@ -165,6 +169,8 @@
     <ClInclude Include="glApplication.h" />
     <ClInclude Include="glApplicationState.h" />
     <ClInclude Include="Log.h" />
+    <ClInclude Include="PersProjInfo.h" />
+    <ClInclude Include="pipeline.h" />
     <ClInclude Include="Quaternion.h" />
     <ClInclude Include="Vector3f.h" />
     <ClInclude Include="Vector4f.h" />
