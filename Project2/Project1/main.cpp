@@ -78,7 +78,7 @@ GLuint IBO;
 GLuint gWorldLocation;
 // 透视变换配置参数数据结构
 PersProjInfo gPersProjInfo;
-
+Camera *pCamera;
 const char* pVSFileName = "shader.vs";
 const char* pFSFileName = "shader.fs";
 
@@ -109,23 +109,11 @@ static void RenderSceneCB()
 		-(zLowBound + zUpperBound) / (zUpperBound - zLowBound), -1,  // 3. column
 		0.0, 0.0, -2 * zUpperBound * zLowBound / (zUpperBound - zLowBound), 0.f);
 	aMat4.Transpose();
-
-	
-	Camera p;
-	Vector3f CameraPos(1.0f, 1.0f, -3.0f);
-	Vector3f CameraTarget(0.45f, 0.0f, 1.0f);
-	Vector3f CameraUp(0.0f, 1.0f, 0.0f);
-
-	Vector3f CameraPos1(0.5f, 0.f, 0.f);
-	Vector3f CameraTarget1(0.f, 0.0f, 1.0f);
-	Vector3f CameraUp1(0.0f, 1.0f, 0.0f);
-
-	p.SetCamera(CameraPos1, CameraTarget1, CameraUp1);
 	
 	aMat4 =
 		aMat4 *
-		p.InitialMyCameraTransform() *
-		Transform::InitTranslationTransform(-p.GetPos().x, -p.GetPos().y, -p.GetPos().z);
+		pCamera->InitialMyCameraTransform() *
+		Transform::InitTranslationTransform(-pCamera->GetPos().x, -pCamera->GetPos().y, -pCamera->GetPos().z);
 	glUniformMatrix4fv(gWorldLocation, 1, GL_TRUE, (const GLfloat*)aMat4.data);
 
 	glEnableVertexAttribArray(0);
@@ -140,11 +128,16 @@ static void RenderSceneCB()
 	glutSwapBuffers();
 }
 
+static void OnKeyboard(unsigned char Key, int x, int y)
+{
+	pCamera->OnKeyboard(Key);
+}
 
 static void InitializeGlutCallbacks()
 {
 	glutDisplayFunc(RenderSceneCB);
 	glutIdleFunc(RenderSceneCB);
+	glutKeyboardFunc(OnKeyboard);
 }
 
 static void CreateVertexBuffer()
@@ -167,13 +160,10 @@ static void CreateVertexBuffer()
 static void CreateIndexBuffer()
 {
 	unsigned int Indices[] = {
-		/*0, 3, 1,
-							   1, 3, 2,
-							   2, 3, 0,*/
-		0, 1, 2,
-		0, 1, 2,
-		0, 1, 2,
-							   0, 1, 2 };
+		0, 3, 1,
+		1, 3, 2,
+		2, 3, 0,
+		0, 1, 2 };
 
 	glGenBuffers(1, &IBO);
 	glBindBuffer(GL_ELEMENT_ARRAY_BUFFER, IBO);
@@ -274,9 +264,21 @@ int main(int argc, char** argv)
 	glutInitDisplayMode(GLUT_DOUBLE | GLUT_RGBA);
 	glutInitWindowSize(WINDOW_WIDTH, WINDOW_HEIGHT);
 	glutInitWindowPosition(100, 100);
-	glutCreateWindow("Tutorial 12");
+	glutCreateWindow("Camera");
+	pCamera = new Camera();
+	Vector3f CameraPos(1.0f, 1.0f, -3.0f);
+	Vector3f CameraTarget(0.45f, 0.0f, 1.0f);
+	Vector3f CameraUp(0.0f, 1.0f, 0.0f);
+
+	Vector3f CameraPos1(0.f, 0.f, 0.f);
+	Vector3f CameraTarget1(0.f, 0.0f, 1.0f);
+	Vector3f CameraUp1(0.0f, 1.0f, 0.0f);
+
+	pCamera->SetCamera(CameraPos1, CameraTarget1, CameraUp1);
+
 
 	InitializeGlutCallbacks();
+	
 
 	// Must be done after glut is initialized!
 	GLenum res = glewInit();

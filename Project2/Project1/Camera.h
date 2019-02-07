@@ -18,7 +18,7 @@ public:
 	const Vector3f& GetPos() { return m_pos; }
 	const Vector3f& GetTarget() { return m_target; };
 	const Vector3f& GetUp() { return m_up; }
-	const float StepSize = 0.1f;
+	const float StepSize = 0.5f;
 	cyMatrix4f m;
 	cyMatrix4f InitCameraTransform(const Vector3f& Target, const Vector3f& Up)
 	{

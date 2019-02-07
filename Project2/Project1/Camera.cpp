@@ -7,21 +7,24 @@ bool Camera::OnKeyboard(int Key)
 
 	switch (Key) {
 
-	case GLUT_KEY_UP:
+	case 'W':
+	case 'w':
 	{
 		m_pos = m_pos + (m_target * StepSize);
 		Ret = true;
 	}
 	break;
 
-	case GLUT_KEY_DOWN:
+	case 'S':
+	case 's':
 	{
 		m_pos = m_pos - (m_target * StepSize);
 		Ret = true;
 	}
 	break;
 
-	case GLUT_KEY_LEFT:
+	case 'A':
+	case 'a':
 	{
 		Vector3f Left = m_target.Cross(m_up);
 		Left.Normalize();
@@ -31,7 +34,8 @@ bool Camera::OnKeyboard(int Key)
 	}
 	break;
 
-	case GLUT_KEY_RIGHT:
+	case 'D':
+	case 'd':
 	{
 		Vector3f Right = m_up.Cross(m_target);
 		Right.Normalize();
