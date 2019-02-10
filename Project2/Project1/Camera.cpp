@@ -44,6 +44,34 @@ bool Camera::OnKeyboard(int Key)
 		Ret = true;
 	}
 	break;
+	case 'Q':
+	case 'q':
+	{
+		deflectionXZDegree += 1;
+		Update();
+	}
+	break;
+	case 'E':
+	case 'e':
+	{
+		deflectionXZDegree -= 1;
+		Update();
+	}
+	break;
+	case 'Z':
+	case 'z':
+	{
+		deflectionYZDegree += 1;
+		Update();
+	}
+	break;
+	case 'C':
+	case 'c':
+	{
+		deflectionYZDegree -= 1;
+		Update();
+	}
+	break;
 	}
 
 	return Ret;

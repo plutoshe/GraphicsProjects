@@ -1,4 +1,5 @@
 #pragma once
+#define _USE_MATH_DEFINES
 #include "Vector3f.h"
 #include "cyMatrix.h"
 class Camera
@@ -41,8 +42,53 @@ public:
 		return m;
 	}
 
+	void Update() {
+		const Vector3f Vaxis(0.0f, 1.0f, 0.0f);
+		Vector3f View(0.0f, 0.0f, 1.0f);
+		View.Rotate(deflectionXZDegree, Vaxis);
+		View.Normalize();
+
+		// Rotate the view vector by the vertical angle around the horizontal axis
+		Vector3f Haxis = Vaxis.Cross(View);
+		Haxis.Normalize();
+		View.Rotate(deflectionYZDegree, Haxis);
+
+		m_target = View;
+		m_target.Normalize();
+
+		m_up = m_target.Cross(Haxis);
+		m_up.Normalize();
+
+		//Vector3f Vaxis(m_up);
+		///*Vaxis = Vaxis.Cross(m_up);
+		//Vaxis.Normalize();*/
+
+		//Vector3f View(m_target);
+
+		//View.Rotate(deflectionXZDegree, Vaxis);
+		//View.Normalize();
+
+		//// Rotate the view vector by the vertical angle around the horizontal axis
+		//Vector3f Haxis = Vaxis.Cross(View);
+		//Haxis.Normalize();
+		//View.Rotate(deflectionYZDegree, Haxis);
+
+		//m_target = View;
+		//m_target.Normalize();
+
+		//m_up = m_target.Cross(Haxis);
+		//m_up.Normalize();
+		//deflectionXZDegree = 0;
+		//deflectionYZDegree = 0;
+		//printf("target: %.2f %.2f %.2f\n", m_target.x, m_target.y, m_target.z);
+		//printf("up: %.2f %.2f %.2f\n", m_up.x, m_up.y, m_up.z);
+	}
+
 private:
 	Vector3f m_pos;
 	Vector3f m_target;
 	Vector3f m_up;
+
+	float deflectionXZDegree = 0;
+	float deflectionYZDegree = 0;
 };

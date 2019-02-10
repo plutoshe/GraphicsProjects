@@ -1,5 +1,19 @@
 #pragma once
 #include <iostream>
+#include <cmath>
+#define _USE_MATH_DEFINES
+#include "math.h"
+#define ToRadian(x) ((x) * M_PI / 180.0f)
+#define ToDegree(x) ((x) * 180.0f / M_PI)
+
+class Quaternion {
+public:
+	Quaternion(float _x, float _y, float _z, float _w);
+	void Normalize();
+	Quaternion Conjugate();
+	float x, y, z, w;
+};
+
 class Vector3f
 {
 
@@ -61,5 +75,8 @@ public:
 	}*/
 	float length();
 	void zero();
+
+	void Rotate(float Angle, const Vector3f& Axe);
+
 };
 

@@ -108,13 +108,13 @@ static void RenderSceneCB()
 		
 		0.0, 0.0, (-zLowBound - zUpperBound) / (zUpperBound - zLowBound), -2 / (zUpperBound - zLowBound), 
 		0.0, 0.0, 1.0, 0.f);
-	//aMat4.Transpose();
+	aMat4.Transpose();
 	
 	aMat4 =
 		aMat4 *
 		pCamera->InitialMyCameraTransform() *
 		Transform::InitTranslationTransform(-pCamera->GetPos().x, -pCamera->GetPos().y, -pCamera->GetPos().z);
-	aMat4.Transpose();
+	//aMat4.Transpose();
 	cyMatrix4f bMat4(
 		1.0f, 0.0f, 0.f, 0.f,
 		0.0f, 1.0f, 0.f, 0.f,
@@ -139,11 +139,29 @@ static void OnKeyboard(unsigned char Key, int x, int y)
 	pCamera->OnKeyboard(Key);
 }
 
+static void PassiveMouseCB(int x, int y)
+{
+	//printf("PassiveMouseCB: %d %d\n", x, y);
+}
+
+static void PassiveMouseAfterAction(int x, int y)
+{
+	//printf("PassiveMouseAfterAction: %d %d\n", x, y);
+}
+
+static void MouseAction(int button, int state, int x, int y) {
+	printf("MouseOperation: %d %d %d %d\n", button, state, x, y);
+}
+
 static void InitializeGlutCallbacks()
 {
 	glutDisplayFunc(RenderSceneCB);
 	glutIdleFunc(RenderSceneCB);
 	glutKeyboardFunc(OnKeyboard);
+	glutMouseFunc(MouseAction);
+	glutMotionFunc(PassiveMouseAfterAction);
+	glutPassiveMotionFunc(PassiveMouseCB);
+
 }
 
 static void CreateVertexBuffer()

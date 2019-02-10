@@ -5,13 +5,14 @@ layout (location = 0) in vec3 Position;
 // WVP标准
 uniform mat4 gWorld;
 float zLowBound = 1.f;
-float zUpperBound = 1000.f;
+float zUpperBound = 2.f;
 out vec4 Color;
 
 void main()
 {
     // calculate the new vertex
     gl_Position = gWorld * vec4(Position, 1);
+    float a = clamp((gl_Position.w - zLowBound) / (zUpperBound - zLowBound), 0.f, 1.f);
     gl_Position = gl_Position / gl_Position.w;    
     gl_Position.z = 1;
     
@@ -21,7 +22,7 @@ void main()
     // gl_Position.w = 1;
     //gl_Position = vec4(Position, 1.0);
 
-    float a = clamp((gl_Position.z - zLowBound) / (zUpperBound - zLowBound), 0.f, 1.f);
+    
     Color = vec4(a, a, 1, 1);
 }
 // #version 330 core

@@ -3,6 +3,8 @@
 #define _USE_MATH_DEFINES
 #include "cyMatrix.h"
 #include "math.h"
+#define ToRadian(x) ((x) * M_PI / 180.0f)
+#define ToDegree(x) ((x) * 180.0f / M_PI)
 
 class PersProjInfo
 {
@@ -19,9 +21,9 @@ public:
 		/*yLower = tan*/
 	}
 
-	float ToRadian(float degree) {
+	/*float ToRadian(float degree) {
 		return (degree * M_PI) / 180;
-	}
+	}*/
 
 	void InitPerspectiveProj(cyMatrix4f& m) 
 	{

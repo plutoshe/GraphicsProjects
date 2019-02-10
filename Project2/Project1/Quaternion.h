@@ -24,6 +24,7 @@
 //
 //		x = sinr * cosp * cosy - cosr * sinp * siny;
 //		y = cosr * sinp * cosy + sinr * cosp * siny;
+
 //		z = cosr * cosp * siny - sinr * sinp * cosy;
 //		w = cosr * cosp * cosy + sinr * sinp * siny;
 //
