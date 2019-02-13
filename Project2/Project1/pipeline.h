@@ -1,135 +1,95 @@
-//#pragma once
-//#include "Vector3f.h"
-//#include "cyMatrix.h"
-//
-//
-//class Pipeline
-//{
-//public:
-//	Pipeline()
-//	{
-//		m_scale = Vector3f(1.0f, 1.0f, 1.0f);
-//		m_worldPos = Vector3f(0.0f, 0.0f, 0.0f);
-//		m_rotateInfo = Vector3f(0.0f, 0.0f, 0.0f);
-//	}
-//
-//	void Scale(float ScaleX, float ScaleY, float ScaleZ)
-//	{
-//		m_scale.x = ScaleX;
-//		m_scale.y = ScaleY;
-//		m_scale.z = ScaleZ;
-//	}
-//
-//	void WorldPos(float x, float y, float z)
-//	{
-//		m_worldPos.x = x;
-//		m_worldPos.y = y;
-//		m_worldPos.z = z;
-//	}
-//
-//	void Rotate(float RotateX, float RotateY, float RotateZ)
-//	{
-//		m_rotateInfo.x = RotateX;
-//		m_rotateInfo.y = RotateY;
-//		m_rotateInfo.z = RotateZ;
-//	}
-//
-//	void SetPerspectiveProj(float FOV, float Width, float Height, float zNear, float zFar)
-//	{
-//		m_persProj.FOV = FOV;
-//		m_persProj.Width = Width;
-//		m_persProj.Height = Height;
-//		m_persProj.zNear = zNear;
-//		m_persProj.zFar = zFar;
-//	}
-//
-//	void SetCamera(const Vector3f& Pos, const Vector3f& Target, const Vector3f& Up)
-//	{
-//		m_camera.Pos = Pos;
-//		m_camera.Target = Target;
-//		m_camera.Up = Up;
-//	}
-//
-//	const cyMatrix4f* GetTrans()
-//	{
-//		cyMatrix4f ScaleTrans, RotateTrans, TranslationTrans, CameraTranslationTrans, CameraRotateTrans, PersProjTrans;
-//
-//		ScaleTrans.InitScaleTransform(m_scale.x, m_scale.y, m_scale.z);
-//		RotateTrans.InitRotateTransform(m_rotateInfo.x, m_rotateInfo.y, m_rotateInfo.z);
-//		TranslationTrans.InitTranslationTransform(m_worldPos.x, m_worldPos.y, m_worldPos.z);
-//		CameraTranslationTrans.InitTranslationTransform(-m_camera.Pos.x, -m_camera.Pos.y, -m_camera.Pos.z);
-//		CameraRotateTrans.InitCameraTransform(m_camera.Target, m_camera.Up);
-//		PersProjTrans.InitPersProjTransform(m_persProj.FOV, m_persProj.Width, m_persProj.Height, m_persProj.zNear, m_persProj.zFar);
-//
-//		m_transformation = PersProjTrans * CameraRotateTrans * CameraTranslationTrans * TranslationTrans * RotateTrans * ScaleTrans;
-//		return &m_transformation;
-//	}
-//
-//private:
-//	Vector3f m_scale;
-//	Vector3f m_worldPos;
-//	Vector3f m_rotateInfo;
-//
-//	struct {
-//		float FOV;
-//		float Width;
-//		float Height;
-//		float zNear;
-//		float zFar;
-//	} m_persProj;
-//
-//	struct {
-//		Vector3f Pos;
-//		Vector3f Target;
-//		Vector3f Up;
-//	} m_camera;
-//
-//	
-//
-//	cyMatrix4f m_transformation;
-//};
-//
-//
-//
-//
-//
-////#pragma once
-//
-////typedef struct {
-////	Vector3f Pos;
-////	Vector3f Target;
-////	Vector3f Up;
-////} Camera;
-////Camera m_camera;
-////
-////
-////
-////void InitCameraTransform(const Vector3f& Target, const Vector3f& Up)
-////{
-////	/*Vector3f N = Target;
-////	N.Normalize();
-////	Vector3f U = Up;
-////	U.Normalize();
-////	U = U.Cross(Target);
-////	Vector3f V = N.Cross(U);
-////
-////	m[0][0] = U.x; m[0][1] = U.y; m[0][2] = U.z; m[0][3] = 0.0f;
-////	m[1][0] = V.x; m[1][1] = V.y; m[1][2] = V.z; m[1][3] = 0.0f;
-////	m[2][0] = N.x; m[2][1] = N.y; m[2][2] = N.z; m[2][3] = 0.0f;
-////	m[3][0] = 0.0f; m[3][1] = 0.0f; m[3][2] = 0.0f; m[3][3] = 1.0f;*/
-////}
-////
-//////const cyMatrix4f* Pipeline::GetTrans()
-//////{
-//////	cyMatrix4f ScaleTrans, RotateTrans, TranslationTrans, CameraTranslationTrans, CameraRotateTrans, PersProjTrans;
-//////
-//////	ScaleTrans.InitScaleTransform(m_scale.x, m_scale.y, m_scale.z);
-//////	RotateTrans.InitRotateTransform(m_rotateInfo.x, m_rotateInfo.y, m_rotateInfo.z);
-//////	TranslationTrans.InitTranslationTransform(m_worldPos.x, m_worldPos.y, m_worldPos.z);
-//////	CameraTranslationTrans.InitTranslationTransform(-m_camera.Pos.x, -m_camera.Pos.y, -m_camera.Pos.z);
-//////	CameraRotateTrans.InitCameraTransform(m_camera.Target, m_camera.Up);
-//////	PersProjTrans.InitPersProjTransform(m_persProj.FOV, m_persProj.Width, m_persProj.Height, m_persProj.zNear, m_persProj.zFar);
-//////
-//////	m_transformation = PersProjTrans * CameraRotateTrans * CameraTranslationTrans * TranslationTrans * RotateTrans * ScaleTrans;
-//////	return &m_transformation;
-//////}
+/*
+	Copyright 2010 Etay Meiri
+
+	This program is free software: you can redistribute it and/or modify
+	it under the terms of the GNU General Public License as published by
+	the Free Software Foundation, either version 3 of the License, or
+	(at your option) any later version.
+
+	This program is distributed in the hope that it will be useful,
+	but WITHOUT ANY WARRANTY; without even the implied warranty of
+	MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+	GNU General Public License for more details.
+
+	You should have received a copy of the GNU General Public License
+	along with this program.  If not, see <http://www.gnu.org/licenses/>.
+*/
+
+#ifndef PIPELINE_H
+#define	PIPELINE_H
+
+#include "math3d.h"
+
+class Pipeline
+{
+public:
+	Pipeline()
+	{
+		m_scale = Vector3f(1.0f, 1.0f, 1.0f);
+		m_worldPos = Vector3f(0.0f, 0.0f, 0.0f);
+		m_rotateInfo = Vector3f(0.0f, 0.0f, 0.0f);
+	}
+
+	void Scale(float ScaleX, float ScaleY, float ScaleZ)
+	{
+		m_scale.x = ScaleX;
+		m_scale.y = ScaleY;
+		m_scale.z = ScaleZ;
+	}
+
+	void WorldPos(float x, float y, float z)
+	{
+		m_worldPos.x = x;
+		m_worldPos.y = y;
+		m_worldPos.z = z;
+	}
+
+	void Rotate(float RotateX, float RotateY, float RotateZ)
+	{
+		m_rotateInfo.x = RotateX;
+		m_rotateInfo.y = RotateY;
+		m_rotateInfo.z = RotateZ;
+	}
+
+	void SetPerspectiveProj(float FOV, float Width, float Height, float zNear, float zFar)
+	{
+		m_persProj.FOV = FOV;
+		m_persProj.Width = Width;
+		m_persProj.Height = Height;
+		m_persProj.zNear = zNear;
+		m_persProj.zFar = zFar;
+	}
+
+	void SetCamera(const Vector3f& Pos, const Vector3f& Target, const Vector3f& Up)
+	{
+		m_camera.Pos = Pos;
+		m_camera.Target = Target;
+		m_camera.Up = Up;
+	}
+
+	const Matrix4f* GetTrans();
+
+private:
+	Vector3f m_scale;
+	Vector3f m_worldPos;
+	Vector3f m_rotateInfo;
+
+	struct {
+		float FOV;
+		float Width;
+		float Height;
+		float zNear;
+		float zFar;
+	} m_persProj;
+
+	struct {
+		Vector3f Pos;
+		Vector3f Target;
+		Vector3f Up;
+	} m_camera;
+
+	Matrix4f m_transformation;
+};
+
+
+#endif	/* PIPELINE_H */
