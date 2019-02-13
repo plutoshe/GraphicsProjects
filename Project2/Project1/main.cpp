@@ -24,7 +24,7 @@
 #include <math.h>
 #include <GL/glew.h>
 #include <GL/freeglut.h>
-
+#include "cyTriMesh.h"
 #include "pipeline.h"
 #include "camera.h"
 
@@ -36,7 +36,7 @@ GLuint IBO;
 GLuint gWVPLocation;
 
 Camera* pGameCamera = NULL;
-
+cyTriMesh meshdata;
 static const char* pVS = "                                                          \n\
 #version 330                                                                        \n\
                                                                                     \n\
@@ -75,7 +75,7 @@ static void RenderSceneCB()
 	Scale += 0.1f;
 
 	Pipeline p;
-	p.Rotate(0.0f, Scale, 0.0f);
+	p.Rotate(0.0f, 0.0f, 0.0f);
 	p.WorldPos(0.0f, 0.0f, 3.0f);
 	p.SetCamera(pGameCamera->GetPos(), pGameCamera->GetTarget(), pGameCamera->GetUp());
 	p.SetPerspectiveProj(60.0f, WINDOW_WIDTH, WINDOW_HEIGHT, 1.0f, 100.0f);
@@ -87,7 +87,7 @@ static void RenderSceneCB()
 	glVertexAttribPointer(0, 3, GL_FLOAT, GL_FALSE, 0, 0);
 	glBindBuffer(GL_ELEMENT_ARRAY_BUFFER, IBO);
 
-	glDrawElements(GL_TRIANGLES, 12, GL_UNSIGNED_INT, 0);
+	glDrawElements(GL_TRIANGLES, meshdata.NV()*4, GL_UNSIGNED_INT, 0);
 
 	glDisableVertexAttribArray(0);
 
@@ -123,30 +123,30 @@ static void InitializeGlutCallbacks()
 	glutKeyboardFunc(KeyboardCB);
 }
 
-static void CreateVertexBuffer()
-{
-	Vector3f Vertices[4];
-	Vertices[0] = Vector3f(-1.0f, -1.0f, 0.5773f);
-	Vertices[1] = Vector3f(0.0f, -1.0f, -1.15475);
-	Vertices[2] = Vector3f(1.0f, -1.0f, 0.5773f);
-	Vertices[3] = Vector3f(0.0f, 1.0f, 0.0f);
-
-	glGenBuffers(1, &VBO);
-	glBindBuffer(GL_ARRAY_BUFFER, VBO);
-	glBufferData(GL_ARRAY_BUFFER, sizeof(Vertices), Vertices, GL_STATIC_DRAW);
-}
-
-static void CreateIndexBuffer()
-{
-	unsigned int Indices[] = { 0, 3, 1,
-							   1, 3, 2,
-							   2, 3, 0,
-							   0, 2, 1 };
-
-	glGenBuffers(1, &IBO);
-	glBindBuffer(GL_ELEMENT_ARRAY_BUFFER, IBO);
-	glBufferData(GL_ELEMENT_ARRAY_BUFFER, sizeof(Indices), Indices, GL_STATIC_DRAW);
-}
+//static void CreateVertexBuffer()
+//{
+//	Vector3f Vertices[4];
+//	Vertices[0] = Vector3f(-1.0f, -1.0f, 0.5773f);
+//	Vertices[1] = Vector3f(0.0f, -1.0f, -1.15475);
+//	Vertices[2] = Vector3f(1.0f, -1.0f, 0.5773f);
+//	Vertices[3] = Vector3f(0.0f, 1.0f, 0.0f);
+//
+//	glGenBuffers(1, &VBO);
+//	glBindBuffer(GL_ARRAY_BUFFER, VBO);
+//	glBufferData(GL_ARRAY_BUFFER, sizeof(Vertices), Vertices, GL_STATIC_DRAW);
+//}
+//
+//static void CreateIndexBuffer()
+//{
+//	unsigned int Indices[] = { 0, 3, 1,
+//							   1, 3, 2,
+//							   2, 3, 0,
+//							   0, 2, 1 };
+//
+//	glGenBuffers(1, &IBO);
+//	glBindBuffer(GL_ELEMENT_ARRAY_BUFFER, IBO);
+//	glBufferData(GL_ELEMENT_ARRAY_BUFFER, sizeof(Indices), Indices, GL_STATIC_DRAW);
+//}
 
 static void AddShader(GLuint ShaderProgram, const char* pShaderText, GLenum ShaderType)
 {
@@ -211,9 +211,58 @@ static void CompileShaders()
 	gWVPLocation = glGetUniformLocation(ShaderProgram, "gWVP");
 	assert(gWVPLocation != 0xFFFFFFFF);
 }
+static void CreateVertexBuffer()
+{
+	Vector3f* Vertices = new Vector3f[meshdata.NV()];
+	/*Vertices[0] = Vector3f(-1.0f, -1.0f, 0.5773f);
+	Vertices[1] = Vector3f(0.0f, -1.0f, -1.15475f);
+	Vertices[2] = Vector3f(1.0f, -1.0f, 0.5773f);
+	Vertices[3] = Vector3f(0.0f, 1.0f, 0.0f);*/
+	for (int i = 0; i < meshdata.NV(); i++) {
+		Vertices[i] = Vector3f(
+			meshdata.V(i).x,
+			meshdata.V(i).y,
+			meshdata.V(i).z);
+	}
+	/*Vertices[0] = Vector3f(0.0f, 0.0f, 1.0f);
+	Vertices[1] = Vector3f(0.0f, 1.0f, 1.0f);
+	Vertices[2] = Vector3f(1.0f, 0.0f, 1.0f);
+	Vertices[3] = Vector3f(1.0f, 1.0f, 2.0f);*/
+	
+	glGenBuffers(1, &VBO);
+	glBindBuffer(GL_ARRAY_BUFFER, VBO);
+	glBufferData(GL_ARRAY_BUFFER, sizeof(Vector3f) * meshdata.NV(), Vertices, GL_STATIC_DRAW);
+}
+
+static void CreateIndexBuffer()
+{
+	unsigned int *Indices = new unsigned int[3 * meshdata.NF()];
+	/*{
+		0, 3, 1,
+		1, 3, 2,
+		2, 3, 0,
+		0, 1, 2 };*/
+	for (int i = 0; i < meshdata.NF(); i++) {
+		
+		
+			auto face = meshdata.F(i);
+			for (int k = 0; k < 3; k++) {
+				Indices[i * 3  + k] = face.v[k];
+			}
+		
+	}
+
+	glGenBuffers(1, &IBO);
+	glBindBuffer(GL_ELEMENT_ARRAY_BUFFER, IBO);
+	glBufferData(GL_ELEMENT_ARRAY_BUFFER, sizeof(unsigned int) * 3 * meshdata.NF(), Indices, GL_STATIC_DRAW);
+}
+void loadMesh(cyTriMesh &trimesh, const char* filename) {
+	trimesh.LoadFromFileObj("teapot.obj");
+}
 
 int main(int argc, char** argv)
 {
+	loadMesh(meshdata, "");
 	glutInit(&argc, argv);
 	glutInitDisplayMode(GLUT_DOUBLE | GLUT_RGBA);
 	glutInitWindowSize(WINDOW_WIDTH, WINDOW_HEIGHT);
@@ -221,11 +270,10 @@ int main(int argc, char** argv)
 	glutCreateWindow("Tutorial 15");
 	glutGameModeString("1280x1024@32");
 	glutEnterGameMode();
-
 	InitializeGlutCallbacks();
 
-	pGameCamera = new Camera(WINDOW_WIDTH, WINDOW_HEIGHT);
-
+	pGameCamera = new Camera(WINDOW_WIDTH, WINDOW_HEIGHT, Vector3f(0,-10,0), Vector3f(0,0,1), Vector3f(0,1,0));
+	//Camera(int WindowWidth, int WindowHeight, const Vector3f& Pos, const Vector3f& Target, const Vector3f& Up);
 	// Must be done after glut is initialized!
 	GLenum res = glewInit();
 	if (res != GLEW_OK) {
