@@ -12,6 +12,7 @@ void main()
 {
     // calculate the new vertex
     gl_Position = gWorld * vec4(Position, 1);
+    //gl_Position = vec4(0,0,0,0);
     //float a = clamp((gl_Position.w - zLowBound) / (zUpperBound - zLowBound), 0.f, 1.f);
     //gl_Position = gl_Position / gl_Position.w;    
     //gl_Position.z = 1;
@@ -21,8 +22,8 @@ void main()
     // gl_Position.z = Position.z;
     // gl_Position.w = 1;
     //gl_Position = vec4(Position, 1.0);
-    // Color = vec4(0.5, 0.5, 1, 1);
-    Color = vec4(clamp(Position, 0.0, 1.0), 1.0); 
+     Color = vec4(0.5, 0.5, 1, 1);
+    //Color = vec4(clamp(Position, 0.0, 1.0), 1.0); 
 }
 // #version 330 core
 
