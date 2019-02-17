@@ -138,6 +138,7 @@
     <ClCompile Include="Camera.cpp" />
     <ClCompile Include="glApplication.cpp" />
     <ClCompile Include="glApplicationState.cpp" />
+    <ClCompile Include="glutBackend.cpp" />
     <ClCompile Include="Log.cpp" />
     <ClCompile Include="main.cpp" />
     <ClCompile Include="PersProjInfo.cpp" />
@@ -148,6 +149,7 @@
     <ClCompile Include="Vector4f.cpp" />
   </ItemGroup>
   <ItemGroup>
+    <ClInclude Include="callback.h" />
     <ClInclude Include="Camera.h" />
     <ClInclude Include="cyAlphaDistribution.h" />
     <ClInclude Include="cyBVH.h" />
@@ -169,6 +171,7 @@
     <ClInclude Include="cyTriMesh.h" />
     <ClInclude Include="glApplication.h" />
     <ClInclude Include="glApplicationState.h" />
+    <ClInclude Include="glutBackend.h" />
     <ClInclude Include="Log.h" />
     <ClInclude Include="PersProjInfo.h" />
     <ClInclude Include="pipeline.h" />
